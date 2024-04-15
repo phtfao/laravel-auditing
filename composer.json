@@ -1,5 +1,5 @@
 {
-    "name": "phtfao/laravel-auditing",
+    "name": "owen-it/laravel-auditing",
     "description": "Audit changes of your Eloquent models in Laravel/Lumen",
     "keywords": [
         "accountability",
