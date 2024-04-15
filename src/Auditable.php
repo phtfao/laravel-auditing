@@ -331,21 +331,19 @@ trait Auditable
             }
         }
 
-        $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
-
         $tags = implode(',', $this->generateTags());
 
         $user = $this->resolveUser();
 
         return $this->transformAudit(array_merge([
-            'old_values'           => $old,
-            'new_values'           => $new,
-            'event'                => $this->auditEvent,
-            'auditable_id'         => $this->getKey(),
-            'auditable_type'       => $this->getMorphClass(),
-            $morphPrefix . '_id'   => $user ? $user->getAuthIdentifier() : null,
-            $morphPrefix . '_type' => $user ? $user->getMorphClass() : null,
-            'tags'                 => empty($tags) ? null : $tags,
+            Config::get('audit.db_fields.audit_old_values')     => $old,
+            Config::get('audit.db_fields.audit_new_values')     => $new,
+            Config::get('audit.db_fields.audit_event')          => $this->auditEvent,
+            Config::get('audit.db_fields.audit_auditable_id')   => $this->getKey(),
+            Config::get('audit.db_fields.audit_auditable_type') => $this->getMorphClass(),
+            Config::get('audit.db_fields.audit_user_id')        => $user ? $user->getAuthIdentifier() : null,
+            Config::get('audit.db_fields.audit_user_type')      => $user ? $user->getMorphClass() : null,
+            Config::get('audit.db_fields.audit_tags')           => empty($tags) ? null : $tags,
         ], $this->runResolvers()));
     }
 

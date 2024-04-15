@@ -29,11 +29,11 @@ class Database implements AuditDriver
                 ->latest()
                 ->get()
                 ->slice($threshold)
-                ->pluck('id');
+                ->pluck(Config::get('audit.db_fields.audit_id'));
 
             if (!$forRemoval->isEmpty()) {
                 return $model->audits()
-                    ->whereIn('id', $forRemoval)
+                    ->whereIn(Config::get('audit.db_fields.audit_id'), $forRemoval)
                     ->delete() > 0;
             }
         }

@@ -49,7 +49,7 @@ trait Audit
     {
         $morphPrefix = Config::get('audit.user.morph_prefix', 'user');
 
-        return $this->morphTo(__FUNCTION__, $morphPrefix . '_type', $morphPrefix . '_id');
+        return $this->morphTo(__FUNCTION__, Config::get('audit.db_fields.audit_user_type'), Config::get('audit.db_fields.audit_user_id'));
     }
 
     /**
@@ -77,13 +77,13 @@ trait Audit
 
         // Metadata
         $this->data = [
-            'audit_id'         => $this->id,
-            'audit_event'      => $this->event,
-            'audit_tags'       => $this->tags,
+            'audit_id'         => $this->${Config::get('audit.db_fields.audit_id')},
+            'audit_event'      => $this->${Config::get('audit.db_fields.audit_event')},
+            'audit_tags'       => $this->${Config::get('audit.db_fields.audit_tags')},
             'audit_created_at' => $this->serializeDate($this->{$this->getCreatedAtColumn()}),
             'audit_updated_at' => $this->serializeDate($this->{$this->getUpdatedAtColumn()}),
-            'user_id'          => $this->getAttribute($morphPrefix . '_id'),
-            'user_type'        => $this->getAttribute($morphPrefix . '_type'),
+            'user_id'          => $this->getAttribute(Config::get('audit.db_fields.audit_user_id')),
+            'user_type'        => $this->getAttribute(Config::get('audit.db_fields.audit_user_type')),
         ];
 
         // add resolvers data to metadata
@@ -102,11 +102,11 @@ trait Audit
         $this->metadata = array_keys($this->data);
 
         // Modified Auditable attributes
-        foreach ($this->new_values as $key => $value) {
+        foreach ($this->${Config::get('audit.db_fields.audit_new_values')} as $key => $value) {
             $this->data['new_' . $key] = $value;
         }
 
-        foreach ($this->old_values as $key => $value) {
+        foreach ($this->${Config::get('audit.db_fields.audit_old_values')} as $key => $value) {
             $this->data['old_' . $key] = $value;
         }
 
@@ -295,6 +295,6 @@ trait Audit
      */
     public function getTags(): array
     {
-        return preg_split('/,/', $this->tags, -1, PREG_SPLIT_NO_EMPTY);
+        return preg_split('/,/', $this->${Config::get('audit.db_fields.audit_tags')}, -1, PREG_SPLIT_NO_EMPTY);
     }
 }
