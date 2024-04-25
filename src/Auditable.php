@@ -363,7 +363,7 @@ trait Auditable
      *
      */
     protected function resolveUser()
-    {   
+    {
         if (! empty($this->preloadedResolverData['user'] ?? null)) {
             return $this->preloadedResolverData['user'];
         }

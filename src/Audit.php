@@ -77,9 +77,9 @@ trait Audit
 
         // Metadata
         $this->data = [
-            'audit_id'         => $this->${Config::get('audit.db_fields.audit_id')},
-            'audit_event'      => $this->${Config::get('audit.db_fields.audit_event')},
-            'audit_tags'       => $this->${Config::get('audit.db_fields.audit_tags')},
+            'audit_id'         => $this->{Config::get('audit.db_fields.audit_id')},
+            'audit_event'      => $this->{Config::get('audit.db_fields.audit_event')},
+            'audit_tags'       => $this->{Config::get('audit.db_fields.audit_tags')},
             'audit_created_at' => $this->serializeDate($this->{$this->getCreatedAtColumn()}),
             'audit_updated_at' => $this->serializeDate($this->{$this->getUpdatedAtColumn()}),
             'user_id'          => $this->getAttribute(Config::get('audit.db_fields.audit_user_id')),
@@ -102,11 +102,11 @@ trait Audit
         $this->metadata = array_keys($this->data);
 
         // Modified Auditable attributes
-        foreach ($this->${Config::get('audit.db_fields.audit_new_values')} as $key => $value) {
+        foreach ($this->{Config::get('audit.db_fields.audit_new_values')} as $key => $value) {
             $this->data['new_' . $key] = $value;
         }
 
-        foreach ($this->${Config::get('audit.db_fields.audit_old_values')} as $key => $value) {
+        foreach ($this->{Config::get('audit.db_fields.audit_old_values')} as $key => $value) {
             $this->data['old_' . $key] = $value;
         }
 
@@ -295,6 +295,6 @@ trait Audit
      */
     public function getTags(): array
     {
-        return preg_split('/,/', $this->${Config::get('audit.db_fields.audit_tags')}, -1, PREG_SPLIT_NO_EMPTY);
+        return preg_split('/,/', $this->{Config::get('audit.db_fields.audit_tags')}, -1, PREG_SPLIT_NO_EMPTY);
     }
 }

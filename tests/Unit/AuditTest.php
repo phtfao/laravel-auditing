@@ -4,6 +4,7 @@ namespace OwenIt\Auditing\Tests;
 
 use Carbon\Carbon;
 use DateTimeInterface;
+use Illuminate\Support\Facades\Config;
 use OwenIt\Auditing\Encoders\Base64Encoder;
 use OwenIt\Auditing\Models\Audit;
 use OwenIt\Auditing\Redactors\LeftRedactor;
@@ -41,8 +42,8 @@ class AuditTest extends AuditingTestCase
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->getSerializedDate($audit->created_at),
-            'audit_updated_at' => $audit->getSerializedDate($audit->updated_at),
+            'audit_created_at' => $audit->getSerializedDate($audit->{Config::get('audit.db_fields.audit_created_at')}),
+            'audit_updated_at' => $audit->getSerializedDate($audit->{Config::get('audit.db_fields.audit_updated_at')}),
             'user_id'          => null,
             'user_type'        => null,
             'new_title'        => 'How To Audit Eloquent Models',
@@ -88,8 +89,8 @@ class AuditTest extends AuditingTestCase
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->getSerializedDate($audit->created_at),
-            'audit_updated_at' => $audit->getSerializedDate($audit->updated_at),
+            'audit_created_at' => $audit->getSerializedDate($audit->{Config::get('audit.db_fields.audit_created_at')}),
+            'audit_updated_at' => $audit->getSerializedDate($audit->{Config::get('audit.db_fields.audit_updated_at')}),
             'user_type'        => User::class,
             'user_first_name'  => 'rick',
             'user_last_name'   => 'Sanchez',
@@ -200,8 +201,8 @@ class AuditTest extends AuditingTestCase
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->getSerializedDate($audit->created_at),
-            'audit_updated_at' => $audit->getSerializedDate($audit->updated_at),
+            'audit_created_at' => $audit->getSerializedDate($audit->{Config::get('audit.db_fields.audit_created_at')}),
+            'audit_updated_at' => $audit->getSerializedDate($audit->{Config::get('audit.db_fields.audit_updated_at')}),
             'user_id'          => null,
             'user_type'        => null,
         ], $metadata, true);
@@ -247,8 +248,8 @@ class AuditTest extends AuditingTestCase
             'audit_ip_address' => '127.0.0.1',
             'audit_user_agent' => 'Symfony',
             'audit_tags'       => null,
-            'audit_created_at' => $audit->getSerializedDate($audit->created_at),
-            'audit_updated_at' => $audit->getSerializedDate($audit->updated_at),
+            'audit_created_at' => $audit->getSerializedDate($audit->{Config::get('audit.db_fields.audit_created_at')}),
+            'audit_updated_at' => $audit->getSerializedDate($audit->{Config::get('audit.db_fields.audit_updated_at')}),
             'user_id'          => 1,
             'user_type'        => User::class,
             'user_is_admin'    => true,
@@ -270,8 +271,8 @@ class AuditTest extends AuditingTestCase
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
 
-        $created_at = $audit->getSerializedDate($audit->created_at);
-        $updated_at = $audit->getSerializedDate($audit->updated_at);
+        $created_at = $audit->getSerializedDate($audit->{Config::get('audit.db_fields.audit_created_at')});
+        $updated_at = $audit->getSerializedDate($audit->{Config::get('audit.db_fields.audit_updated_at')});
         $expected = [
             'audit_id' => 1,
             'audit_event' => 'created',
@@ -307,8 +308,8 @@ class AuditTest extends AuditingTestCase
 
         $metadata = $audit->getMetadata(true, JSON_PRETTY_PRINT);
 
-        $created_at = $audit->getSerializedDate($audit->created_at);
-        $updated_at = $audit->getSerializedDate($audit->updated_at);
+        $created_at = $audit->getSerializedDate($audit->{Config::get('audit.db_fields.audit_created_at')});
+        $updated_at = $audit->getSerializedDate($audit->{Config::get('audit.db_fields.audit_updated_at')});
         $user_created_at = $audit->getSerializedDate($user->created_at);
         $user_updated_at = $audit->getSerializedDate($user->updated_at);
         $expected = [

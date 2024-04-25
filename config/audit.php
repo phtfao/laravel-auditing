@@ -182,4 +182,17 @@ return [
     */
 
     'console' => false,
+    'db_fields' => [
+        'audit_id'                 => env('ID','co_auditoria'),
+        'audit_old_values'         => env('OLD','old_values'),
+        'audit_new_values'         => env('NEW','new_values'),
+        'audit_event'              => env('EVENT','event'),
+        'audit_tags'               => env('TAGS','tags'),
+        'audit_created_at'         => env('CREATED', 'dt_auditoria'),
+        'audit_updated_at'         => env('UPDATED', 'updated_at'),
+        'audit_user_id'            => env("USER_ID", 'user_id'),
+        'audit_user_type'          => env("USER_TYPE", 'user_type'),
+        'audit_auditable_id'       => env("AUDITABLE_ID", 'auditable_id'),
+        'audit_auditable_type'     => env("AUDITABLE_TYPE", 'auditable_type')
+    ]
 ];

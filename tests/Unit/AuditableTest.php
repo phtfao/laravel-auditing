@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Testing\Assert;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Encoders\Base64Encoder;
@@ -22,6 +23,9 @@ use OwenIt\Auditing\Tests\Models\ArticleExcludes;
 use OwenIt\Auditing\Tests\Models\User;
 use ReflectionClass;
 
+/**
+ * @group auditable
+ */
 class AuditableTest extends AuditingTestCase
 {
     use WithFaker;
@@ -407,22 +411,22 @@ class AuditableTest extends AuditingTestCase
 
         $morphPrefix = config('audit.user.morph_prefix', 'user');
         self::Assert()::assertArraySubset([
-            'old_values'     => [],
-            'new_values'     => [
+            Config::get('audit.db_fields.audit_old_values')     => [],
+            Config::get('audit.db_fields.audit_new_values')     => [
                 'title'        => 'How To Audit Eloquent Models',
                 'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
                 'reviewed'     => 1,
                 'published_at' => $now->toDateTimeString(),
             ],
-            'event'                 => 'created',
-            'auditable_id'          => null,
-            'auditable_type'        => Article::class,
-            $morphPrefix . '_id'    => null,
-            $morphPrefix . '_type'  => null,
+            Config::get('audit.db_fields.audit_event')                 => 'created',
+            Config::get('audit.db_fields.audit_auditable_id')          => null,
+            Config::get('audit.db_fields.audit_auditable_type')        => Article::class,
+            Config::get('audit.db_fields.audit_user_id')    => null,
+            Config::get('audit.db_fields.audit_user_type')  => null,
             'url'                   => UrlResolver::resolveCommandLine(),
             'ip_address'            => '127.0.0.1',
             'user_agent'            => 'Symfony',
-            'tags'                  => null,
+            Config::get('audit.db_fields.audit_tags')                  => null,
         ], $auditData, true);
     }
 
@@ -467,22 +471,22 @@ class AuditableTest extends AuditingTestCase
 
         $morphPrefix = config('audit.user.morph_prefix', 'user');
         self::Assert()::assertArraySubset([
-            'old_values'     => [],
-            'new_values'     => [
+            Config::get('audit.db_fields.audit_old_values')     => [],
+            Config::get('audit.db_fields.audit_new_values')     => [
                 'title'        => 'How To Audit Eloquent Models',
                 'content'      => Article::contentMutate('First step: install the laravel-auditing package.'),
                 'reviewed'     => 1,
                 'published_at' => $now->toDateTimeString(),
             ],
-            'event'                 => 'created',
-            'auditable_id'          => null,
-            'auditable_type'        => Article::class,
-            $morphPrefix . '_id'    => $id,
-            $morphPrefix . '_type'  => $type,
+            Config::get('audit.db_fields.audit_event')                 => 'created',
+            Config::get('audit.db_fields.audit_auditable_id')          => null,
+            Config::get('audit.db_fields.audit_auditable_type')        => Article::class,
+            Config::get('audit.db_fields.audit_user_id')    => $id,
+            Config::get('audit.db_fields.audit_user_type')  => $type,
             'url'                   => UrlResolver::resolveCommandLine(),
             'ip_address'            => '127.0.0.1',
             'user_agent'            => 'Symfony',
-            'tags'                  => null,
+            Config::get('audit.db_fields.audit_tags')                  => null
         ], $auditData, true);
     }
 
@@ -550,20 +554,20 @@ class AuditableTest extends AuditingTestCase
 
         $morphPrefix = config('audit.user.morph_prefix', 'user');
         self::Assert()::assertArraySubset([
-            'old_values'     => [],
-            'new_values'     => [
+            Config::get('audit.db_fields.audit_old_values')     => [],
+            Config::get('audit.db_fields.audit_new_values')     => [
                 'title'   => 'How To Audit Eloquent Models',
                 'content' => Article::contentMutate('First step: install the laravel-auditing package.'),
             ],
-            'event'                 => 'created',
-            'auditable_id'          => null,
-            'auditable_type'        => Article::class,
-            $morphPrefix . '_id'    => null,
-            $morphPrefix . '_type'  => null,
+            Config::get('audit.db_fields.audit_event')                 => 'created',
+            Config::get('audit.db_fields.audit_auditable_id')          => null,
+            Config::get('audit.db_fields.audit_auditable_type')        => Article::class,
+            Config::get('audit.db_fields.audit_user_id')    => null,
+            Config::get('audit.db_fields.audit_user_type')  => null,
             'url'                   => UrlResolver::resolveCommandLine(),
             'ip_address'            => '127.0.0.1',
             'user_agent'            => 'Symfony',
-            'tags'                  => null,
+            Config::get('audit.db_fields.audit_tags')                  => null
         ], $auditData, true);
     }
 
@@ -996,7 +1000,7 @@ class AuditableTest extends AuditingTestCase
         ]);
 
         $audit = factory(Audit::class)->make([
-            'auditable_type' => 'users',
+            Config::get('audit.db_fields.audit_auditable_type') => 'users',
         ]);
 
         $model = new Article();
@@ -1015,7 +1019,7 @@ class AuditableTest extends AuditingTestCase
 
         $firstModel = factory(Article::class)->create();
         $firstAudit = $firstModel->audits()->first();
-        $firstAudit->auditable_id = $firstModel->id;
+        $firstAudit->{Config::get('audit.db_fields.audit_auditable_id')} = $firstModel->id;
 
         $secondModel = factory(Article::class)->create();
 
@@ -1034,8 +1038,8 @@ class AuditableTest extends AuditingTestCase
         $model = factory(Article::class)->create();
 
         $audit = factory(Audit::class)->create([
-            'auditable_type' => Article::class,
-            'auditable_id'   => (string)$model->id,
+            Config::get('audit.db_fields.audit_auditable_type') => Article::class,
+            Config::get('audit.db_fields.audit_auditable_id')  => (string)$model->id,
         ]);
 
         // Make sure the auditable_id isn't being cast
@@ -1067,8 +1071,8 @@ class AuditableTest extends AuditingTestCase
         }
 
         $audit = factory(Audit::class)->create([
-            'auditable_type' => Article::class,
-            'auditable_id'   => $key,
+            Config::get('audit.db_fields.audit_auditable_type') => Article::class,
+            Config::get('audit.db_fields.audit_auditable_id')   => $key,
         ]);
 
         $this->assertInstanceOf(Auditable::class, $model->transitionTo($audit));
@@ -1090,8 +1094,8 @@ class AuditableTest extends AuditingTestCase
         ];
 
         $audit = factory(Audit::class)->create([
-            'auditable_id'   => $model->getKey(),
-            'auditable_type' => Article::class,
+            Config::get('audit.db_fields.audit_auditable_id')   => $model->getKey(),
+            Config::get('audit.db_fields.audit_auditable_type') => Article::class,
         ]);
 
         $model->transitionTo($audit);
@@ -1106,11 +1110,11 @@ class AuditableTest extends AuditingTestCase
         $model = factory(Article::class)->create();
 
         $incompatibleAudit = factory(Audit::class)->create([
-            'event'          => 'created',
-            'auditable_id'   => $model->getKey(),
-            'auditable_type' => Article::class,
-            'old_values'     => [],
-            'new_values'     => [
+            Config::get('audit.db_fields.audit_event')          => 'created',
+            Config::get('audit.db_fields.audit_auditable_id')   => $model->getKey(),
+            Config::get('audit.db_fields.audit_auditable_type') => Article::class,
+            Config::get('audit.db_fields.audit_old_values')     => [],
+            Config::get('audit.db_fields.audit_new_values')     => [
                 'subject' => 'Culpa qui rerum excepturi quisquam quia officiis.',
                 'text'    => 'Magnam enim suscipit officiis tempore ut quis harum.',
             ],
@@ -1165,10 +1169,10 @@ class AuditableTest extends AuditingTestCase
 
         $audits = $models->map(function (Article $model) use ($auditableType, $oldValues, $newValues) {
             return factory(Audit::class)->create([
-                'auditable_id'   => $model->getKey(),
-                'auditable_type' => $auditableType,
-                'old_values'     => $oldValues,
-                'new_values'     => $newValues,
+                Config::get('audit.db_fields.audit_auditable_id')   => $model->getKey(),
+                Config::get('audit.db_fields.audit_auditable_type') => $auditableType,
+                Config::get('audit.db_fields.audit_old_values')     => $oldValues,
+                Config::get('audit.db_fields.audit_new_values')     => $newValues,
             ]);
         });
 
