@@ -22,14 +22,14 @@ class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
      */
     protected $guarded = [];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected $casts = [
-        'old_values'   => 'json',
-        'new_values'   => 'json',
-        // Note: Please do not add 'auditable_id' in here, as it will break non-integer PK models
-    ];
+    public function getCasts()
+    {
+        return [
+            Config::get('audit.db_fields.audit_old_values') => 'json',
+            Config::get('audit.db_fields.audit_new_values') => 'json'
+            // Note: Please do not add 'auditable_id' in here, as it will break non-integer PK models
+        ];
+    }
 
     public function getSerializedDate($date)
     {
@@ -39,11 +39,6 @@ class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
     public function setPrimaryKey($value)
     {
         $this->primaryKey = $value;
-    }
-
-    public function setCasts($casts)
-    {
-        $this->casts = $casts;
     }
 
     /**
@@ -71,10 +66,6 @@ class Audit extends Model implements \OwenIt\Auditing\Contracts\Audit
         parent::boot();
         static::saving(function ($audit) {
             $audit->setPrimaryKey(Config::get('audit.db_fields.audit_id'));
-            $audit->setCasts([
-                Config::get('audit.db_fields.audit_old_values') => 'json',
-                Config::get('audit.db_fields.audit_new_values') => 'json'
-            ]);
         });
     }
 }
